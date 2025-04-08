@@ -2,31 +2,42 @@ pipeline {
     agent any
 
     stages {
+        stage('Clone Repo') {
+            steps {
+                echo '🔄 Cloning repository...'
+                git 'https://github.com/mdshadab0/DevOps-Task-2'
+            }
+        }
+
         stage('Build') {
             steps {
-                script {
-                    echo '🔧 Building Docker image...'
-                    dockerImage = docker.build("my-python-app")
-                }
+                echo '⚙️ Building the application...'
+                sh 'pip install -r requirements.txt'  // Change this if your app isn't Python
             }
         }
 
         stage('Test') {
             steps {
+                echo '✅ Running tests...'
+                sh 'pytest'  // Change based on your testing tool
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo '🐳 Building Docker image...'
                 script {
-                    echo '🧪 Running tests inside container...'
-                    dockerImage.inside {
-                        sh 'python app.py | grep "Hello, Jenkins Pipeline with Docker!"'
-                    }
+                    docker.build("myapp")
                 }
             }
         }
 
         stage('Deploy') {
             steps {
+                echo '🚀 Deploying the Docker container...'
                 script {
-                    echo '🚀 Deploying (running container)...'
-                    dockerImage.run()
+                    sh 'docker rm -f myapp-container || true'
+                    docker.image("myapp").run("-d -p 5000:5000 --name myapp-container")
                 }
             }
         }
