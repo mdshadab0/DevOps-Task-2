@@ -5,7 +5,7 @@ pipeline {
         stage('Clone Repo') {
             steps {
                 echo '🔄 Cloning repository...'
-                git 'https://github.com/mdshadab0/DevOps-Task-2'
+                credentialsId: 'f721d32e-1533-4976-9f2b-bfa373352a84', url: 'https://github.com/mdshadab0/DevOps-Task-2.git'
             }
         }
 
